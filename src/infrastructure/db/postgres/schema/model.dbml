@@ -1,0 +1,136 @@
+// Coordinadora - Modelo Entidad-Relación
+// Generado a partir del esquema SQL
+
+Table roles {
+  id integer [pk, increment]
+  name varchar [not null, unique]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+
+  note: 'Roles de acceso al sistema (admin, usuario)'
+}
+
+Table users {
+  id integer [pk, increment]
+  first_name varchar [not null]
+  last_name varchar [not null]
+  email varchar [not null, unique]
+  password_hash text [not null]
+  role_id integer [not null, ref: > roles.id]
+  address text
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+
+  note: 'Usuarios del sistema, tanto administradores como clientes'
+}
+
+Table locations {
+  id integer [pk, increment]
+  name varchar [not null]
+  department varchar [not null]
+  address text
+  lat double
+  lng double
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+  
+  indexes {
+    (name, department) [unique]
+  }
+
+  note: 'Ciudades y ubicaciones para orígenes y destinos de envíos'
+}
+
+Table transporters {
+  id integer [pk, increment]
+  name varchar [not null]
+  vehicle_type varchar [not null]
+  capacity integer [not null, note: 'Capacidad en kg']
+  available boolean [default: true]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+
+  note: 'Transportistas disponibles para realizar envíos'
+}
+
+Table product_types {
+  id integer [pk, increment]
+  name varchar [not null, unique]
+  min_weight_grams integer [not null]
+  max_weight_grams integer
+  description text
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+
+  note: 'Categorías de productos para envíos (sobres, paquetes, etc.)'
+}
+
+Table routes {
+  id integer [pk, increment]
+  origin_id integer [not null, ref: > locations.id]
+  destination_id integer [not null, ref: > locations.id]
+  estimated_time interval [not null]
+  distance decimal [not null]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+  
+  indexes {
+    (origin_id, destination_id) [unique]
+  }
+
+  note: 'Rutas predefinidas entre ubicaciones con tiempo estimado'
+}
+
+Table shipments {
+  id integer [pk, increment]
+  user_id integer [not null, ref: > users.id]
+  origin_id integer [not null, ref: > locations.id]
+  destination_id integer [not null, ref: > locations.id]
+  destination_detail text
+  product_type_id integer [not null, ref: > product_types.id]
+  weight_grams integer [not null]
+  dimensions text
+  recipient_name varchar [not null]
+  recipient_address text [not null]
+  recipient_phone varchar [not null]
+  recipient_document varchar
+  tracking_code varchar [unique]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+
+  note: 'Envíos registrados en el sistema'
+}
+
+Table shipment_status_history {
+  id integer [pk, increment]
+  shipment_id integer [not null, ref: > shipments.id]
+  status varchar [not null, note: 'En espera, En transito, Entregado']
+  comment text
+  timestamp timestamp [default: `CURRENT_TIMESTAMP`]
+  created_by integer [ref: > users.id]
+
+  note: 'Historial de cambios de estado de los envíos'
+}
+
+Table shipment_assignments {
+  id integer [pk, increment]
+  shipment_id integer [not null, ref: > shipments.id]
+  route_id integer [not null, ref: > routes.id]
+  transporter_id integer [ref: > transporters.id]
+  admin_id integer [not null, ref: > users.id]
+  assigned_at timestamp [default: `CURRENT_TIMESTAMP`]
+  completed_at timestamp
+  notes text
+
+  indexes {
+    (shipment_id, route_id) [unique]
+  }
+
+  note: 'Asignaciones de envíos a rutas y transportistas'
+}
+
+// Definición de las relaciones adicionales (algunas ya están implícitas por las referencias)
+Ref: shipments.origin_id > locations.id
+Ref: shipments.destination_id > locations.id
+Ref: routes.origin_id > locations.id
+Ref: routes.destination_id > locations.id
