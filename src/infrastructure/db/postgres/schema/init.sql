@@ -185,27 +185,27 @@ INSERT INTO routes (origin_id, destination_id, estimated_time, distance)
 SELECT o.id, d.id, 
        -- Tiempo estimado (intervalo)
        CASE 
-           WHEN o.name = 'Bogotá' AND d.name = 'Medellín' THEN INTERVAL '8 hours'
-           WHEN o.name = 'Bogotá' AND d.name = 'Cali' THEN INTERVAL '10 hours'
-           WHEN o.name = 'Bogotá' AND d.name = 'Barranquilla' THEN INTERVAL '20 hours'
-           WHEN o.name = 'Bogotá' AND d.name = 'Cartagena' THEN INTERVAL '22 hours'
-           WHEN o.name = 'Medellín' AND d.name = 'Bogotá' THEN INTERVAL '8 hours'
-           WHEN o.name = 'Medellín' AND d.name = 'Cali' THEN INTERVAL '9 hours'
-           WHEN o.name = 'Medellín' AND d.name = 'Barranquilla' THEN INTERVAL '14 hours'
-           WHEN o.name = 'Medellín' AND d.name = 'Cartagena' THEN INTERVAL '13 hours'
-           WHEN o.name = 'Cali' AND d.name = 'Bogotá' THEN INTERVAL '10 hours'
-           WHEN o.name = 'Cali' AND d.name = 'Medellín' THEN INTERVAL '9 hours'
-           WHEN o.name = 'Cali' AND d.name = 'Barranquilla' THEN INTERVAL '22 hours'
-           WHEN o.name = 'Cali' AND d.name = 'Cartagena' THEN INTERVAL '20 hours'
-           WHEN o.name = 'Barranquilla' AND d.name = 'Bogotá' THEN INTERVAL '20 hours'
-           WHEN o.name = 'Barranquilla' AND d.name = 'Medellín' THEN INTERVAL '14 hours'
-           WHEN o.name = 'Barranquilla' AND d.name = 'Cali' THEN INTERVAL '22 hours'
-           WHEN o.name = 'Barranquilla' AND d.name = 'Cartagena' THEN INTERVAL '2 hours'
-           WHEN o.name = 'Cartagena' AND d.name = 'Bogotá' THEN INTERVAL '22 hours'
-           WHEN o.name = 'Cartagena' AND d.name = 'Medellín' THEN INTERVAL '13 hours'
-           WHEN o.name = 'Cartagena' AND d.name = 'Cali' THEN INTERVAL '20 hours'
-           WHEN o.name = 'Cartagena' AND d.name = 'Barranquilla' THEN INTERVAL '2 hours'
-           ELSE INTERVAL '12 hours' -- Valor por defecto
+           WHEN o.name = 'Bogotá' AND d.name = 'Medellín' THEN INTERVAL '8 horas'
+           WHEN o.name = 'Bogotá' AND d.name = 'Cali' THEN INTERVAL '10 horas'
+           WHEN o.name = 'Bogotá' AND d.name = 'Barranquilla' THEN INTERVAL '20 horas'
+           WHEN o.name = 'Bogotá' AND d.name = 'Cartagena' THEN INTERVAL '22 horas'
+           WHEN o.name = 'Medellín' AND d.name = 'Bogotá' THEN INTERVAL '8 horas'
+           WHEN o.name = 'Medellín' AND d.name = 'Cali' THEN INTERVAL '9 horas'
+           WHEN o.name = 'Medellín' AND d.name = 'Barranquilla' THEN INTERVAL '14 horas'
+           WHEN o.name = 'Medellín' AND d.name = 'Cartagena' THEN INTERVAL '13 horas'
+           WHEN o.name = 'Cali' AND d.name = 'Bogotá' THEN INTERVAL '10 horas'
+           WHEN o.name = 'Cali' AND d.name = 'Medellín' THEN INTERVAL '9 horas'
+           WHEN o.name = 'Cali' AND d.name = 'Barranquilla' THEN INTERVAL '22 horas'
+           WHEN o.name = 'Cali' AND d.name = 'Cartagena' THEN INTERVAL '20 horas'
+           WHEN o.name = 'Barranquilla' AND d.name = 'Bogotá' THEN INTERVAL '20 horas'
+           WHEN o.name = 'Barranquilla' AND d.name = 'Medellín' THEN INTERVAL '14 horas'
+           WHEN o.name = 'Barranquilla' AND d.name = 'Cali' THEN INTERVAL '22 horas'
+           WHEN o.name = 'Barranquilla' AND d.name = 'Cartagena' THEN INTERVAL '2 horas'
+           WHEN o.name = 'Cartagena' AND d.name = 'Bogotá' THEN INTERVAL '22 horas'
+           WHEN o.name = 'Cartagena' AND d.name = 'Medellín' THEN INTERVAL '13 horas'
+           WHEN o.name = 'Cartagena' AND d.name = 'Cali' THEN INTERVAL '20 horas'
+           WHEN o.name = 'Cartagena' AND d.name = 'Barranquilla' THEN INTERVAL '2 horas'
+           ELSE INTERVAL '12 horas' -- Valor por defecto
        END,
        -- Distancia en km
        CASE 
@@ -239,13 +239,13 @@ ON CONFLICT (origin_id, destination_id) DO NOTHING;
 
 -- Transportistas de prueba
 INSERT INTO transporters (name, vehicle_type, capacity, available) VALUES
-  ('TransExpress', 'Camión', 5000, true),
-  ('RapidShip', 'Furgoneta', 1000, true),
-  ('MegaTransport', 'Camión Grande', 10000, true),
-  ('CityDelivery', 'Moto', 50, true),
-  ('FastConnect', 'Furgoneta', 800, false),
-  ('HeavyLoad', 'Camión', 7500, true),
-  ('ExpressDelivery', 'Moto', 30, true)
+  ('TransExpress', 'Camión', 5000000, true),
+  ('RapidShip', 'Furgoneta', 1000000, true),
+  ('MegaTransport', 'Camión Grande', 10000000, true),
+  ('CityDelivery', 'Moto', 50000, true),
+  ('FastConnect', 'Furgoneta', 800000, false),
+  ('HeavyLoad', 'Camión', 7500000, true),
+  ('ExpressDelivery', 'Moto', 30000, true)
 ON CONFLICT DO NOTHING;
 
 -- Usuario administrador por defecto (password_hash corresponde a 'admin123' - en producción usar hash real)
