@@ -1,8 +1,9 @@
 import { Router } from 'express';
+import authRoutes from './auth.routes';
 
 const router = Router();
 
-// Routes will be registered here
-// router.use('/resource', resourceRouter);
+// Registrar las rutas de autenticación
+router.use('/auth', authRoutes);
 
 export default router;
