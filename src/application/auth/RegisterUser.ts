@@ -16,12 +16,13 @@ export class RegisterUser {
 
         const hashedPassword = await hash(input.password, 10);  
         
-        return this.authRepository.createUser({
+        const newUser = await this.authRepository.createUser({
             ...input,
             password_hash: hashedPassword,
             role_id: 2,
-        })
+        });
+        
+        const { password_hash, ...userWithoutPassword } = newUser;
+        return userWithoutPassword
     }
-
-
 }
