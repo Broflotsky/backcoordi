@@ -1,7 +1,6 @@
 import { body } from "express-validator";
 
 export const shipmentValidator = [
-  body("user_id").isInt().withMessage("user_id es requerido"),
   body("origin_id").isInt().withMessage("origin_id es requerido"),
   body("destination_id").isInt().withMessage("destination_id es requerido"),
   body("destination_detail")
