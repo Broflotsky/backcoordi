@@ -2,15 +2,8 @@ import { IUserRepository } from "@domain/auth/IUserRepository";
 import { User } from "@domain/entities/User";
 import db from '@config/database';
 
-/**
- * Implementación en PostgreSQL del repositorio de usuarios
- */
+
 export class UserPostgresRepository implements IUserRepository {
-  /**
-   * Encuentra un usuario por su ID
-   * @param id ID del usuario a buscar
-   * @returns Promesa con el usuario encontrado o null si no existe
-   */
   async findById(id: number): Promise<User | null> {
     try {
       const query = `
