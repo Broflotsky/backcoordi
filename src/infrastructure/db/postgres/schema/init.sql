@@ -99,11 +99,11 @@ CREATE TABLE IF NOT EXISTS shipments (
   destination_detail TEXT,
   product_type_id INTEGER NOT NULL REFERENCES product_types(id),
   weight_grams INTEGER NOT NULL CHECK (weight_grams > 0),
-  dimensions TEXT,
+  dimensions TEXT NOT NULL,
   recipient_name VARCHAR(200) NOT NULL,
   recipient_address TEXT NOT NULL,
   recipient_phone VARCHAR(20) NOT NULL,
-  recipient_document VARCHAR(30),
+  recipient_document VARCHAR(30) NOT NULL,
   tracking_code VARCHAR(30) UNIQUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
