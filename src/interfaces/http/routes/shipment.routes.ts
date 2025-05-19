@@ -3,10 +3,12 @@ import { createShipment } from "../controllers/ShipmentController";
 import { 
   getShipmentStatusByTrackingCode,
   getShipmentStatusHistoryByTrackingCode,
-  updateShipmentStatus 
+  updateShipmentStatus,
+  completeShipment 
 } from "../controllers/ShipmentStatusController";
 import { shipmentValidator } from "../validators/shipment.validator";
 import { shipmentStatusValidator } from "../validators/shipmentStatus.validator";
+import { completeShipmentValidator } from "../validators/completeShipment.validator";
 import { validation } from "../validators/validation";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { roleMiddleware } from "../middlewares/roleMiddleware";
@@ -346,5 +348,53 @@ shipmentRouter.get('/tracking/:trackingCode/history', authMiddleware, getShipmen
  *         description: Envío no encontrado
  */
 shipmentRouter.post('/:id/status', authMiddleware, roleMiddleware(1), shipmentStatusValidator, validation, updateShipmentStatus);
+
+/**
+ * @swagger
+ * /api/v1/shipments/{id}/complete:
+ *   post:
+ *     summary: Marca un envío como entregado (solo administradores)
+ *     tags: [Estado de Envíos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del envío a marcar como entregado
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               comment:
+ *                 type: string
+ *                 description: Comentario opcional sobre la entrega
+ *     responses:
+ *       200:
+ *         description: Envío marcado como entregado correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Envío marcado como entregado correctamente
+ *       400:
+ *         description: Error al marcar el envío como entregado
+ *       403:
+ *         description: Solo los administradores pueden marcar envíos como entregados
+ *       404:
+ *         description: Envío no encontrado
+ */
+shipmentRouter.post('/:id/complete', authMiddleware, roleMiddleware(1), completeShipmentValidator, validation, completeShipment);
 
 export default shipmentRouter;
