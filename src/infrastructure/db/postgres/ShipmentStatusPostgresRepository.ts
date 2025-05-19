@@ -17,4 +17,19 @@ export class ShipmentStatusPostgresRepository implements IShipmentStatusReposito
       userId
     ]);
   }
+
+  async createStatus(status: { shipment_id: number; status: string; comment?: string; created_by: number }): Promise<void> {
+    const query = `
+      INSERT INTO shipment_status_history 
+      (shipment_id, status, comment, created_by)
+      VALUES ($1, $2, $3, $4)
+    `;
+    
+    await db.query(query, [
+      status.shipment_id,
+      status.status,
+      status.comment || null,
+      status.created_by
+    ]);
+  }
 }
