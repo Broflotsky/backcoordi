@@ -17,14 +17,7 @@ import db from '@config/database';
  */
 export const assignShipmentToRoute = async (req: Request, res: Response) => {
   const admin = (req as any).user;
-  
-  // Verificar que el usuario sea un administrador
-  if (admin.role_name !== 'admin') {
-    return res.status(403).json({
-      status: 'error',
-      message: 'Solo los administradores pueden asignar envíos a rutas'
-    });
-  }
+
 
   // Inicializar repositorios y servicios
   const shipmentRepo = new ShipmentPostgresRepository();

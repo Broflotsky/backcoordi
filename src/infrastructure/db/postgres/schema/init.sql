@@ -257,7 +257,7 @@ VALUES (
   'Admin', 
   'Sistema', 
   'admin@coordinadora.com', 
-  '$2a$10$XgNUv.vxNCDjnH4OKY2DneeIY1zyPGT/p8XO.9fP.RzQFxmvmPeYi', -- hash para 'admin123'
+  '$2b$10$r1xr.2.6/L/PYPTxOJ8I8.3zCpalbvBznhJWKOht2WutqejtRwHZ6', -- hash para 'admin123'
   (SELECT id FROM roles WHERE name = 'admin'),
   'Oficina Central'
 )
@@ -269,7 +269,7 @@ VALUES (
   'Usuario', 
   'Prueba', 
   'usuario@ejemplo.com', 
-  '$2a$10$iWPsUmVxAgw7kDk/hZOzWehIq0k6NHxVjZKXAScbFZGVe7pOH3k1.', -- hash para 'user123'
+  '$2b$10$aMXlp7WZqYTD.RwXPwHyK.Vqbf9/TO7wpWGztl9ULHDFBbPY9RUDW', -- hash para 'user123'
   (SELECT id FROM roles WHERE name = 'user'),
   'Calle 78 Sur # 35-100, Medellín'
 )

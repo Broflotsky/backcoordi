@@ -9,6 +9,7 @@ import {
 import { assignmentValidator } from "../validators/assignment.validator";
 import { validation } from "../validators/validation";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { roleMiddleware } from "../middlewares/roleMiddleware";
 
 const assignmentRouter = Router();
 
@@ -63,6 +64,7 @@ const assignmentRouter = Router();
 assignmentRouter.post(
   "/", 
   authMiddleware, 
+  roleMiddleware(1),
   assignmentValidator, 
   validation, 
   assignShipmentToRoute
