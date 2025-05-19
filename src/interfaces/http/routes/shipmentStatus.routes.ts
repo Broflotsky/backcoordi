@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { ShipmentStatusController } from "../controllers/ShipmentStatusController";
-import { authMiddleware } from "../../interfaces/http/middlewares/authMiddleware";
+import { authMiddleware } from "../middlewares/authMiddleware";
 import { ShipmentPostgresRepository } from "@infrastructure/db/postgres/ShipmentPostgresRepository";
 import { ShipmentStatusPostgresRepository } from "@infrastructure/db/postgres/ShipmentStatusPostgresRepository";
 import { TransporterPostgresRepository } from "@infrastructure/db/postgres/TransporterPostgresRepository";
 import { ShipmentAssignmentPostgresRepository } from "@infrastructure/db/postgres/ShipmentAssignmentPostgresRepository";
+import { ShipmentStatusController } from "../../controllers/ShipmentStatusController";
 
 const router = Router();
 
@@ -22,14 +22,15 @@ const shipmentStatusController = new ShipmentStatusController(
 
 router.use(authMiddleware);
 
-router.get("/tracking/:trackingCode/status", (req, res) =>
+router.get("/tracking/:trackingCode", (req, res) =>
   shipmentStatusController.getStatusByTrackingCode(req, res)
 );
 
 router.get("/tracking/:trackingCode/history", (req, res) =>
   shipmentStatusController.getHistoryByTrackingCode(req, res)
 );
-router.post("/:id/status", (req, res) =>
+
+router.post("/update/:id", (req, res) =>
   shipmentStatusController.updateStatus(req, res)
 );
 
