@@ -1,31 +1,20 @@
 import { Request, Response } from "express";
-import { GetShipmentStatus } from "@application/shipments/GetShipmentStatus";
-import { GetShipmentStatusHistory } from "@application/shipments/GetShipmentStatusHistory";
-import { UpdateShipmentStatus } from "@application/shipments/UpdateShipmentStatus";
+import { ShipmentStatusUseCaseFactory } from "@application/shipments/factories/ShipmentStatusUseCaseFactory";
 import { ShipmentPostgresRepository } from "@infrastructure/db/postgres/ShipmentPostgresRepository";
-import { ShipmentStatusPostgresRepository } from "@infrastructure/db/postgres/ShipmentStatusPostgresRepository";
 import { TransporterPostgresRepository } from "@infrastructure/db/postgres/TransporterPostgresRepository";
 import { ShipmentAssignmentPostgresRepository } from "@infrastructure/db/postgres/ShipmentAssignmentPostgresRepository";
 
 const shipmentRepository = new ShipmentPostgresRepository();
-const statusRepository = new ShipmentStatusPostgresRepository();
+
+const getStatusUseCase =
+  ShipmentStatusUseCaseFactory.createGetShipmentStatusUseCase();
+const getHistoryUseCase =
+  ShipmentStatusUseCaseFactory.createGetShipmentStatusHistoryUseCase();
+
 const transporterRepository = new TransporterPostgresRepository();
 const assignmentRepository = new ShipmentAssignmentPostgresRepository();
-
-const getStatusUseCase = new GetShipmentStatus(
-  statusRepository,
-  shipmentRepository
-);
-const getHistoryUseCase = new GetShipmentStatusHistory(
-  statusRepository,
-  shipmentRepository
-);
-const updateStatusUseCase = new UpdateShipmentStatus(
-  statusRepository,
-  shipmentRepository,
-  transporterRepository,
-  assignmentRepository
-);
+const updateStatusUseCase =
+  ShipmentStatusUseCaseFactory.createUpdateShipmentStatusUseCase();
 
 export const getShipmentStatusByTrackingCode = async (
   req: Request,
