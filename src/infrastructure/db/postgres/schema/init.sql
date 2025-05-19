@@ -54,9 +54,12 @@ CREATE TABLE IF NOT EXISTS transporters (
   name VARCHAR(100) NOT NULL,
   vehicle_type VARCHAR(50) NOT NULL,
   capacity INTEGER NOT NULL CHECK (capacity > 0),
+  available_capacity INTEGER NOT NULL,
   available BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT check_available_capacity CHECK (available_capacity >= 0),
+  CONSTRAINT check_max_available_capacity CHECK (available_capacity <= capacity)
 );
 
 COMMENT ON TABLE transporters IS 'Transportistas disponibles para realizar envíos';
@@ -185,27 +188,27 @@ INSERT INTO routes (origin_id, destination_id, estimated_time, distance)
 SELECT o.id, d.id, 
        -- Tiempo estimado (intervalo)
        CASE 
-           WHEN o.name = 'Bogotá' AND d.name = 'Medellín' THEN INTERVAL '8 horas'
-           WHEN o.name = 'Bogotá' AND d.name = 'Cali' THEN INTERVAL '10 horas'
-           WHEN o.name = 'Bogotá' AND d.name = 'Barranquilla' THEN INTERVAL '20 horas'
-           WHEN o.name = 'Bogotá' AND d.name = 'Cartagena' THEN INTERVAL '22 horas'
-           WHEN o.name = 'Medellín' AND d.name = 'Bogotá' THEN INTERVAL '8 horas'
-           WHEN o.name = 'Medellín' AND d.name = 'Cali' THEN INTERVAL '9 horas'
-           WHEN o.name = 'Medellín' AND d.name = 'Barranquilla' THEN INTERVAL '14 horas'
-           WHEN o.name = 'Medellín' AND d.name = 'Cartagena' THEN INTERVAL '13 horas'
-           WHEN o.name = 'Cali' AND d.name = 'Bogotá' THEN INTERVAL '10 horas'
-           WHEN o.name = 'Cali' AND d.name = 'Medellín' THEN INTERVAL '9 horas'
-           WHEN o.name = 'Cali' AND d.name = 'Barranquilla' THEN INTERVAL '22 horas'
-           WHEN o.name = 'Cali' AND d.name = 'Cartagena' THEN INTERVAL '20 horas'
-           WHEN o.name = 'Barranquilla' AND d.name = 'Bogotá' THEN INTERVAL '20 horas'
-           WHEN o.name = 'Barranquilla' AND d.name = 'Medellín' THEN INTERVAL '14 horas'
-           WHEN o.name = 'Barranquilla' AND d.name = 'Cali' THEN INTERVAL '22 horas'
-           WHEN o.name = 'Barranquilla' AND d.name = 'Cartagena' THEN INTERVAL '2 horas'
-           WHEN o.name = 'Cartagena' AND d.name = 'Bogotá' THEN INTERVAL '22 horas'
-           WHEN o.name = 'Cartagena' AND d.name = 'Medellín' THEN INTERVAL '13 horas'
-           WHEN o.name = 'Cartagena' AND d.name = 'Cali' THEN INTERVAL '20 horas'
-           WHEN o.name = 'Cartagena' AND d.name = 'Barranquilla' THEN INTERVAL '2 horas'
-           ELSE INTERVAL '12 horas' -- Valor por defecto
+           WHEN o.name = 'Bogotá' AND d.name = 'Medellín' THEN INTERVAL '8 hours'
+           WHEN o.name = 'Bogotá' AND d.name = 'Cali' THEN INTERVAL '10 hours'
+           WHEN o.name = 'Bogotá' AND d.name = 'Barranquilla' THEN INTERVAL '20 hours'
+           WHEN o.name = 'Bogotá' AND d.name = 'Cartagena' THEN INTERVAL '22 hours'
+           WHEN o.name = 'Medellín' AND d.name = 'Bogotá' THEN INTERVAL '8 hours'
+           WHEN o.name = 'Medellín' AND d.name = 'Cali' THEN INTERVAL '9 hours'
+           WHEN o.name = 'Medellín' AND d.name = 'Barranquilla' THEN INTERVAL '14 hours'
+           WHEN o.name = 'Medellín' AND d.name = 'Cartagena' THEN INTERVAL '13 hours'
+           WHEN o.name = 'Cali' AND d.name = 'Bogotá' THEN INTERVAL '10 hours'
+           WHEN o.name = 'Cali' AND d.name = 'Medellín' THEN INTERVAL '9 hours'
+           WHEN o.name = 'Cali' AND d.name = 'Barranquilla' THEN INTERVAL '22 hours'
+           WHEN o.name = 'Cali' AND d.name = 'Cartagena' THEN INTERVAL '20 hours'
+           WHEN o.name = 'Barranquilla' AND d.name = 'Bogotá' THEN INTERVAL '20 hours'
+           WHEN o.name = 'Barranquilla' AND d.name = 'Medellín' THEN INTERVAL '14 hours'
+           WHEN o.name = 'Barranquilla' AND d.name = 'Cali' THEN INTERVAL '22 hours'
+           WHEN o.name = 'Barranquilla' AND d.name = 'Cartagena' THEN INTERVAL '2 hours'
+           WHEN o.name = 'Cartagena' AND d.name = 'Bogotá' THEN INTERVAL '22 hours'
+           WHEN o.name = 'Cartagena' AND d.name = 'Medellín' THEN INTERVAL '13 hours'
+           WHEN o.name = 'Cartagena' AND d.name = 'Cali' THEN INTERVAL '20 hours'
+           WHEN o.name = 'Cartagena' AND d.name = 'Barranquilla' THEN INTERVAL '2 hours'
+           ELSE INTERVAL '12 hours' -- Valor por defecto
        END,
        -- Distancia en km
        CASE 
@@ -238,14 +241,14 @@ AND d.name IN ('Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena')
 ON CONFLICT (origin_id, destination_id) DO NOTHING;
 
 -- Transportistas de prueba
-INSERT INTO transporters (name, vehicle_type, capacity, available) VALUES
-  ('TransExpress', 'Camión', 5000000, true),
-  ('RapidShip', 'Furgoneta', 1000000, true),
-  ('MegaTransport', 'Camión Grande', 10000000, true),
-  ('CityDelivery', 'Moto', 50000, true),
-  ('FastConnect', 'Furgoneta', 800000, false),
-  ('HeavyLoad', 'Camión', 7500000, true),
-  ('ExpressDelivery', 'Moto', 30000, true)
+INSERT INTO transporters (name, vehicle_type, capacity, available_capacity, available) VALUES
+  ('TransExpress', 'Camión', 5000000, 5000000, true),
+  ('RapidShip', 'Furgoneta', 1000000, 1000000, true),
+  ('MegaTransport', 'Camión Grande', 10000000, 10000000, true),
+  ('CityDelivery', 'Moto', 50000, 50000, true),
+  ('FastConnect', 'Furgoneta', 800000, 0, false),
+  ('HeavyLoad', 'Camión', 7500000, 7500000, true),
+  ('ExpressDelivery', 'Moto', 30000, 30000, true)
 ON CONFLICT DO NOTHING;
 
 -- Usuario administrador por defecto (password_hash corresponde a 'admin123' - en producción usar hash real)
@@ -254,7 +257,7 @@ VALUES (
   'Admin', 
   'Sistema', 
   'admin@coordinadora.com', 
-  '$2a$10$XgNUv.vxNCDjnH4OKY2DneeIY1zyPGT/p8XO.9fP.RzQFxmvmPeYi', -- hash para 'admin123'
+  '$2b$10$r1xr.2.6/L/PYPTxOJ8I8.3zCpalbvBznhJWKOht2WutqejtRwHZ6', -- hash para 'admin123'
   (SELECT id FROM roles WHERE name = 'admin'),
   'Oficina Central'
 )
@@ -266,7 +269,7 @@ VALUES (
   'Usuario', 
   'Prueba', 
   'usuario@ejemplo.com', 
-  '$2a$10$iWPsUmVxAgw7kDk/hZOzWehIq0k6NHxVjZKXAScbFZGVe7pOH3k1.', -- hash para 'user123'
+  '$2b$10$aMXlp7WZqYTD.RwXPwHyK.Vqbf9/TO7wpWGztl9ULHDFBbPY9RUDW', -- hash para 'user123'
   (SELECT id FROM roles WHERE name = 'user'),
   'Calle 78 Sur # 35-100, Medellín'
 )

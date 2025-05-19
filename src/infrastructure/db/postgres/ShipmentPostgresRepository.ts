@@ -28,4 +28,44 @@ export class ShipmentPostgresRepository implements IShipmentRepository{
         return res.rows[0];
     }
     
+    async findById(id: number): Promise<Shipment | null> {
+        const query = `
+            SELECT * FROM shipments
+            WHERE id = $1
+        `;
+        
+        const result = await db.query(query, [id]);
+        
+        if (result.rows.length === 0) {
+            return null;
+        }
+        
+        return result.rows[0];
+    }
+    
+    async findByStatus(status: string): Promise<Shipment[]> {
+        const query = `
+            SELECT s.* FROM shipments s
+            JOIN shipment_status_history ssh ON s.id = ssh.shipment_id
+            WHERE ssh.status = $1
+            AND ssh.id = (
+                SELECT MAX(id) FROM shipment_status_history
+                WHERE shipment_id = s.id
+            )
+            ORDER BY s.created_at DESC
+        `;
+        
+        const result = await db.query(query, [status]);
+        return result.rows;
+    }
+    
+    async getAll(): Promise<Shipment[]> {
+        const query = `
+            SELECT * FROM shipments
+            ORDER BY created_at DESC
+        `;
+        
+        const result = await db.query(query);
+        return result.rows;
+    }
 }
