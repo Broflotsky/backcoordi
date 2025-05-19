@@ -1,9 +1,8 @@
 import { Transporter } from '@domain/entities/Transporter';
 import { ITransporterRepository } from '@domain/shipments/ITransporterRepository';
-import { Pool } from 'pg';
+import db from '@config/database';
 
 export class TransporterPostgresRepository implements ITransporterRepository {
-  constructor(private pool: Pool) {}
 
   async findById(id: number): Promise<Transporter | null> {
     const query = `
@@ -11,7 +10,7 @@ export class TransporterPostgresRepository implements ITransporterRepository {
       WHERE id = $1
     `;
 
-    const result = await this.pool.query(query, [id]);
+    const result = await db.query(query, [id]);
     if (result.rows.length === 0) {
       return null;
     }
@@ -25,7 +24,7 @@ export class TransporterPostgresRepository implements ITransporterRepository {
       ORDER BY name
     `;
 
-    const result = await this.pool.query(query);
+    const result = await db.query(query);
     return result.rows as Transporter[];
   }
 
@@ -36,7 +35,7 @@ export class TransporterPostgresRepository implements ITransporterRepository {
       ORDER BY name
     `;
 
-    const result = await this.pool.query(query, [requiredCapacity]);
+    const result = await db.query(query, [requiredCapacity]);
     return result.rows as Transporter[];
   }
 
@@ -48,7 +47,7 @@ export class TransporterPostgresRepository implements ITransporterRepository {
       RETURNING *
     `;
 
-    const result = await this.pool.query(query, [id, available]);
+    const result = await db.query(query, [id, available]);
     return result.rows[0] as Transporter;
   }
 
@@ -61,7 +60,7 @@ export class TransporterPostgresRepository implements ITransporterRepository {
       RETURNING *
     `;
 
-    const result = await this.pool.query(query, [id, weight]);
+    const result = await db.query(query, [id, weight]);
 
     // Si la capacidad disponible llega a cero, marcamos como no disponible
     if (result.rows[0].available_capacity === 0) {
@@ -87,7 +86,7 @@ export class TransporterPostgresRepository implements ITransporterRepository {
       RETURNING *
     `;
 
-    const result = await this.pool.query(query, [id, weight]);
+    const result = await db.query(query, [id, weight]);
     return result.rows[0] as Transporter;
   }
 }
