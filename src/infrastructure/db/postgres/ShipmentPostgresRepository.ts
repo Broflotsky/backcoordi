@@ -43,6 +43,21 @@ export class ShipmentPostgresRepository implements IShipmentRepository{
         return result.rows[0];
     }
     
+    async findByTrackingCode(trackingCode: string): Promise<Shipment | null> {
+        const query = `
+            SELECT * FROM shipments
+            WHERE tracking_code = $1
+        `;
+        
+        const result = await db.query(query, [trackingCode]);
+        
+        if (result.rows.length === 0) {
+            return null;
+        }
+        
+        return result.rows[0];
+    }
+    
     async findByStatus(status: string): Promise<Shipment[]> {
         const query = `
             SELECT s.* FROM shipments s

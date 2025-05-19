@@ -1,9 +1,8 @@
 import { ShipmentAssignment } from '@domain/entities/ShipmentAssignment';
 import { IShipmentAssignmentRepository } from '@domain/shipments/IShipmentAssignmentRepository';
-import { Pool } from 'pg';
+import db from '@config/database';
 
 export class ShipmentAssignmentPostgresRepository implements IShipmentAssignmentRepository {
-  constructor(private pool: Pool) {}
 
   async createAssignment(assignment: ShipmentAssignment): Promise<ShipmentAssignment> {
     const query = `
@@ -23,7 +22,7 @@ export class ShipmentAssignmentPostgresRepository implements IShipmentAssignment
       assignment.notes || null
     ];
 
-    const result = await this.pool.query(query, values);
+    const result = await db.query(query, values);
     return result.rows[0];
   }
 
@@ -45,7 +44,7 @@ export class ShipmentAssignmentPostgresRepository implements IShipmentAssignment
       WHERE sa.id = $1
     `;
 
-    const result = await this.pool.query(query, [id]);
+    const result = await db.query(query, [id]);
     
     if (result.rows.length === 0) {
       return null;
@@ -73,7 +72,7 @@ export class ShipmentAssignmentPostgresRepository implements IShipmentAssignment
       ORDER BY sa.assigned_at DESC
     `;
 
-    const result = await this.pool.query(query, [shipmentId]);
+    const result = await db.query(query, [shipmentId]);
     return result.rows.map(row => this.mapToAssignmentWithRelations(row));
   }
 
@@ -96,7 +95,7 @@ export class ShipmentAssignmentPostgresRepository implements IShipmentAssignment
       ORDER BY sa.assigned_at DESC
     `;
 
-    const result = await this.pool.query(query, [routeId]);
+    const result = await db.query(query, [routeId]);
     return result.rows.map(row => this.mapToAssignmentWithRelations(row));
   }
 
@@ -119,7 +118,7 @@ export class ShipmentAssignmentPostgresRepository implements IShipmentAssignment
       ORDER BY sa.assigned_at DESC
     `;
 
-    const result = await this.pool.query(query, [transporterId]);
+    const result = await db.query(query, [transporterId]);
     return result.rows.map(row => this.mapToAssignmentWithRelations(row));
   }
 
@@ -131,7 +130,7 @@ export class ShipmentAssignmentPostgresRepository implements IShipmentAssignment
       RETURNING *
     `;
 
-    const result = await this.pool.query(query, [id]);
+    const result = await db.query(query, [id]);
     
     if (result.rows.length === 0) {
       throw new Error(`La asignación con ID ${id} no fue encontrada`);
@@ -201,7 +200,7 @@ export class ShipmentAssignmentPostgresRepository implements IShipmentAssignment
       ORDER BY sa.assigned_at DESC
     `;
 
-    const result = await this.pool.query(query, params);
+    const result = await db.query(query, params);
     return result.rows.map(row => this.mapToAssignmentWithRelations(row));
   }
 

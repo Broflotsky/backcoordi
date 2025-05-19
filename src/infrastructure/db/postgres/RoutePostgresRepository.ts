@@ -1,10 +1,8 @@
-import { Route } from '@domain/entities/Route';
-import { IRouteRepository } from '@domain/shipments/IRouteRepository';
-import { Pool } from 'pg';
+import { Route } from "@domain/entities/Route";
+import { IRouteRepository } from "@domain/shipments/IRouteRepository";
+import db from "@config/database";
 
 export class RoutePostgresRepository implements IRouteRepository {
-  constructor(private pool: Pool) {}
-
   async findById(id: number): Promise<Route | null> {
     const query = `
       SELECT r.*, 
@@ -16,7 +14,7 @@ export class RoutePostgresRepository implements IRouteRepository {
       WHERE r.id = $1
     `;
 
-    const result = await this.pool.query(query, [id]);
+    const result = await db.query(query, [id]);
     if (result.rows.length === 0) {
       return null;
     }
@@ -27,17 +25,20 @@ export class RoutePostgresRepository implements IRouteRepository {
       origin: {
         id: route.origin_id,
         name: route.origin_name,
-        department: route.origin_department
+        department: route.origin_department,
       },
       destination: {
         id: route.destination_id,
         name: route.destination_name,
-        department: route.destination_department
-      }
+        department: route.destination_department,
+      },
     };
   }
 
-  async findByLocations(originId: number, destinationId: number): Promise<Route | null> {
+  async findByLocations(
+    originId: number,
+    destinationId: number
+  ): Promise<Route | null> {
     const query = `
       SELECT r.*, 
         o.name as origin_name, o.department as origin_department,
@@ -48,7 +49,7 @@ export class RoutePostgresRepository implements IRouteRepository {
       WHERE r.origin_id = $1 AND r.destination_id = $2
     `;
 
-    const result = await this.pool.query(query, [originId, destinationId]);
+    const result = await db.query(query, [originId, destinationId]);
     if (result.rows.length === 0) {
       return null;
     }
@@ -59,13 +60,13 @@ export class RoutePostgresRepository implements IRouteRepository {
       origin: {
         id: route.origin_id,
         name: route.origin_name,
-        department: route.origin_department
+        department: route.origin_department,
       },
       destination: {
         id: route.destination_id,
         name: route.destination_name,
-        department: route.destination_department
-      }
+        department: route.destination_department,
+      },
     };
   }
 
@@ -80,24 +81,27 @@ export class RoutePostgresRepository implements IRouteRepository {
       ORDER BY o.name, d.name
     `;
 
-    const result = await this.pool.query(query);
-    
-    return result.rows.map(route => ({
+    const result = await db.query(query);
+
+    return result.rows.map((route) => ({
       ...route,
       origin: {
         id: route.origin_id,
         name: route.origin_name,
-        department: route.origin_department
+        department: route.origin_department,
       },
       destination: {
         id: route.destination_id,
         name: route.destination_name,
-        department: route.destination_department
-      }
+        department: route.destination_department,
+      },
     }));
   }
 
-  async getFiltered(filters: { origin_id?: number, destination_id?: number }): Promise<Route[]> {
+  async getFiltered(filters: {
+    origin_id?: number;
+    destination_id?: number;
+  }): Promise<Route[]> {
     let conditions = [];
     const params: any[] = [];
     let paramCount = 1;
@@ -114,7 +118,8 @@ export class RoutePostgresRepository implements IRouteRepository {
       paramCount++;
     }
 
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
     const query = `
       SELECT r.*, 
@@ -127,20 +132,20 @@ export class RoutePostgresRepository implements IRouteRepository {
       ORDER BY o.name, d.name
     `;
 
-    const result = await this.pool.query(query, params);
-    
-    return result.rows.map(route => ({
+    const result = await db.query(query, params);
+
+    return result.rows.map((route) => ({
       ...route,
       origin: {
         id: route.origin_id,
         name: route.origin_name,
-        department: route.origin_department
+        department: route.origin_department,
       },
       destination: {
         id: route.destination_id,
         name: route.destination_name,
-        department: route.destination_department
-      }
+        department: route.destination_department,
+      },
     }));
   }
 }
