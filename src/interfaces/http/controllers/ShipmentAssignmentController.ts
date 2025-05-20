@@ -21,9 +21,9 @@ export const assignShipmentToRoute = async (req: Request, res: Response) => {
 
   // Inicializar repositorios y servicios
   const shipmentRepo = new ShipmentPostgresRepository();
-  const routeRepo = new RoutePostgresRepository(db);
-  const transporterRepo = new TransporterPostgresRepository(db);
-  const assignmentRepo = new ShipmentAssignmentPostgresRepository(db);
+  const routeRepo = new RoutePostgresRepository();
+  const transporterRepo = new TransporterPostgresRepository();
+  const assignmentRepo = new ShipmentAssignmentPostgresRepository();
   const statusRepo = new ShipmentStatusPostgresRepository();
   const userRepo = new UserPostgresRepository();
   const emailService = new EmailService();
@@ -69,7 +69,7 @@ export const assignShipmentToRoute = async (req: Request, res: Response) => {
  * Obtiene todas las rutas disponibles
  */
 export const getAvailableRoutes = async (req: Request, res: Response) => {
-  const routeRepo = new RoutePostgresRepository(db);
+  const routeRepo = new RoutePostgresRepository();
   const getRoutes = new GetAvailableRoutes(routeRepo);
   
   try {
@@ -102,7 +102,7 @@ export const getAvailableRoutes = async (req: Request, res: Response) => {
  * Obtiene todos los transportistas disponibles con capacidad suficiente
  */
 export const getAvailableTransporters = async (req: Request, res: Response) => {
-  const transporterRepo = new TransporterPostgresRepository(db);
+  const transporterRepo = new TransporterPostgresRepository();
   const getTransporters = new GetAvailableTransporters(transporterRepo);
   
   try {
@@ -133,7 +133,7 @@ export const getAvailableTransporters = async (req: Request, res: Response) => {
  */
 export const getPendingShipments = async (req: Request, res: Response) => {
   const shipmentRepo = new ShipmentPostgresRepository();
-  const assignmentRepo = new ShipmentAssignmentPostgresRepository(db);
+  const assignmentRepo = new ShipmentAssignmentPostgresRepository();
   const getPendingShipments = new GetPendingShipments(shipmentRepo, assignmentRepo);
   
   try {
@@ -162,7 +162,7 @@ export const getPendingShipments = async (req: Request, res: Response) => {
  * Obtiene todas las asignaciones de envíos con filtros opcionales
  */
 export const getShipmentAssignments = async (req: Request, res: Response) => {
-  const assignmentRepo = new ShipmentAssignmentPostgresRepository(db);
+  const assignmentRepo = new ShipmentAssignmentPostgresRepository();
   
   try {
     const filters: any = {};

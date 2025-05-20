@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import db, { initTestDatabase, cleanTestDatabase } from '@config/database.test';
 import jwt from 'jsonwebtoken';
+import { redisManager } from '../../../../infrastructure/redis/RedisClient';
 
 dotenv.config({ path: path.resolve(__dirname, '../../../../../.env.test') });
 
@@ -136,6 +137,7 @@ describe('Shipment Assignment Tests (HU3)', () => {
   });
 
   afterAll(async () => {
+    await redisManager.disconnect();
     await cleanTestDatabase();
     await db.end();
   });
@@ -286,7 +288,7 @@ describe('Shipment Assignment Tests (HU3)', () => {
           .send(assignmentPayload)
           .expect(400);
         
-        expect(response.body).toHaveProperty('error');
+        expect(response.body).toHaveProperty('message', 'El envío ya está asignado a una ruta');
       } catch (error: any) {
         // En caso de que el servidor responda con otro código, aceptamos la prueba
         // ya que lo importante es que no permita doble asignación

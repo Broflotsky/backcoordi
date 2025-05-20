@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import db, { initTestDatabase, cleanTestDatabase } from '@config/database.test';
 import jwt from 'jsonwebtoken';
+import { redisManager } from '../../../../infrastructure/redis/RedisClient';
 
 dotenv.config({ path: path.resolve(__dirname, '../../../../../.env.test') });
 
@@ -34,6 +35,7 @@ describe('Shipment Routes', () => {
   afterAll(async () => {
     await cleanTestDatabase();
     await db.end();
+    await redisManager.disconnect();
   });
 
   describe('POST /api/v1/shipments', () => {
