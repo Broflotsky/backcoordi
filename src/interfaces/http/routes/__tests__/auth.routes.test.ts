@@ -3,6 +3,7 @@ import app from '../../../../app';
 import dotenv from 'dotenv';
 import path from 'path';
 import db, { initTestDatabase, cleanTestDatabase } from '@config/database.test';
+import { redisManager } from '../../../../infrastructure/redis/RedisClient';
 
 dotenv.config({ path: path.resolve(__dirname, '../../../../../.env.test') });
 
@@ -23,6 +24,7 @@ describe('Auth Routes', () => {
   afterAll(async () => {
     await cleanTestDatabase();
     await db.end();
+    await redisManager.disconnect();
   });
 
   describe('POST /api/v1/auth/register', () => {
